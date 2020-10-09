@@ -1,5 +1,5 @@
 import React from "react";
-
+import io from "socket.io-client";
 import "./App.css";
 
 const BACKEND_URL = "http://localhost:5000";
@@ -15,10 +15,21 @@ class App extends React.Component {
       status: "",
       progress: "",
       summarizedText: "",
+      socket: io.connect(BACKEND_URL),
     };
 
     this.handleSubmitForm = this.handleSubmitForm.bind(this);
     this.handleOnChange = this.handleOnChange.bind(this);
+  }
+
+  componentDidMount() {
+    this.state.socket.on("progress update", (payload) => {
+      this.setState({
+        status: payload["Status"],
+        progress: payload["Progress"],
+        summarizedText: payload["Summarized Text"],
+      });
+    });
   }
 
   handleSubmitForm(event) {
@@ -36,10 +47,14 @@ class App extends React.Component {
         return res.json();
       })
       .then((data) => {
-        console.log(data);
-        this.setState({
-          threadID: data["Thread ID"],
-        });
+        this.setState(
+          {
+            threadID: data["Thread ID"],
+          },
+          () => {
+            this.handleCheckProgress();
+          }
+        );
       })
       .catch((err) => {
         console.error(err);
@@ -61,34 +76,12 @@ class App extends React.Component {
     }
   }
 
-  handleCheckStatus() {
-    console.log(this.state.threadID);
-
+  handleCheckProgress() {
     const request = {
       "Thread ID": this.state.threadID,
     };
 
-    fetch(`${BACKEND_URL}/pdfsummarizer/api/post/checkstatus`, {
-      method: "POST",
-      body: JSON.stringify(request),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        console.log(data);
-        this.setState({
-          status: data["Status"],
-          progress: data["Progress"],
-          summarizedText: data["Summarized Text"],
-        });
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    this.state.socket.emit("check progress", request);
   }
 
   render() {
@@ -121,13 +114,6 @@ class App extends React.Component {
         {this.state.threadID && (
           <div className="result-container">
             <p>Progress: {this.state.progress}</p>
-            <button
-              onClick={() => {
-                this.handleCheckStatus();
-              }}
-            >
-              Check Status
-            </button>
             {this.state.progress === "Complete" ? (
               <>
                 <h2>Summarized Text</h2>
