@@ -1,0 +1,55 @@
+.App {
+  position: absolute;
+  min-height: 100%;
+  width: 100%;
+  background-color: rgb(46, 49, 52);
+}
+
+h1,
+h2,
+p,
+label {
+  color: whitesmoke;
+  text-align: center;
+}
+
+form,
+.result-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-evenly;
+  width: calc(min(500px, 90%));
+  padding: 4vmin;
+  background-color: rgba(255, 255, 255, 0.12);
+  margin: 0 auto 4vmin;
+}
+
+form > div {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin: 2vmin 0;
+}
+
+input[type="submit"] {
+  margin: 0 auto;
+  border: 2px solid whitesmoke;
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  background-color: white;
+  transition: all 100ms ease-in-out;
+  scale: 1;
+}
+
+input[type="submit"]:hover {
+  background-color: rgb(230, 225, 225);
+  scale: 1.02;
+}
+
+.summarized-text {
+  text-align: left;
+  background-color: rgba(255, 255, 255, 0.08);
+  padding: 2vmin;
+}
