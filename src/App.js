@@ -2,6 +2,8 @@ import React from "react";
 import io from "socket.io-client";
 import "./App.css";
 
+import loadingGif from "./assets/loading.gif";
+
 const BACKEND_URL = "http://localhost:5000";
 
 class App extends React.Component {
@@ -113,7 +115,18 @@ class App extends React.Component {
 
         {this.state.threadID && (
           <div className="result-container">
-            <p>Progress: {this.state.progress}</p>
+            <div className="progress-container">
+              <p>
+                <b>Progress</b> {this.state.progress}
+              </p>
+              {this.state.progress !== "Complete" && (
+                <img
+                  src={loadingGif}
+                  className="loading-gif"
+                  alt="loading-gif"
+                ></img>
+              )}
+            </div>
             {this.state.progress === "Complete" ? (
               <>
                 <h2>Summarized Text</h2>
